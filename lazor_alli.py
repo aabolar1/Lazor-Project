@@ -40,6 +40,7 @@ def LazorBoard(filename):
         else:
             empty_row = [" "] * len(pre_board[0])
             board.append(empty_row) 
+            
     return board
 
 board = LazorBoard("yarn_5.bff")
@@ -53,7 +54,7 @@ def board_state(filename, board):
     with open(filename, 'r') as bff:
         lines = bff.readlines()
     
-    new_board = board
+    new_board = [row[:] for row in board]
     start_parsing = False
     
     for line in lines:
@@ -68,7 +69,9 @@ def board_state(filename, board):
             block_type, amount = line[0], int(line[2])
             
             # Find the empty spots where blocks are allowed
+            print(board)
             empty_spots = [(i, j) for i in range(len(board)) for j in range(len(board[0])) if board[i][j] == "o"]
+            print(empty_spots)
             if len(empty_spots) < int(amount):
                 raise ValueError(f"Warning: Not enough empty spots for {block_type}")
             
@@ -76,11 +79,11 @@ def board_state(filename, board):
             random.shuffle(empty_spots)
             for i in range(amount):
                 x, y = empty_spots[i]
-                new_board[x][y] = block_type
-               
+                new_board[x][y] = block_type       
+                
     return new_board
 
-curr_board = board_state("yarn_5.bff", board)
+board_state("yarn_5.bff", board)
 
 class Block:
     '''
