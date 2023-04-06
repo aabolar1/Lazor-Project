@@ -53,6 +53,7 @@ def board_state(filename, board):
     with open(filename, 'r') as bff:
         lines = bff.readlines()
     
+    new_board = board
     start_parsing = False
     
     for line in lines:
@@ -75,19 +76,49 @@ def board_state(filename, board):
             random.shuffle(empty_spots)
             for i in range(amount):
                 x, y = empty_spots[i]
-                board[x][y] = block_type
-    
-    new_board = board            
+                new_board[x][y] = block_type
+               
     return new_board
 
 curr_board = board_state("yarn_5.bff", board)
 
 class Block:
     '''
-     This class object to represent each block within the game. The block object contains information 
-    about the block type (reflect, opaque, or refract) and its position on the board.
+    This class object to represent each block within the game. The block object contains information 
+    about the block type (reflect, opaque, or refract), its position on the board and its orientation
     '''
-    def __init__(self, x, y, block_type,):
-        self.block_type = block_type
+    def __init__(self, x, y, block_type):
         self.x = x
         self.y = y
+        self.block_type = block_type
+        
+    def get_position(self):
+        '''
+        Returns the current position of the block as a tuple (x, y)
+        '''
+        return (self.x, self.y)
+    
+    def set_position(self, x, y):
+        '''
+        Updates the position of the block to (x, y)
+        '''
+        self.x = x
+        self.y = y
+    
+    def get_type(self):
+        '''
+        Returns the type of the block (reflect, opaque, or refract)
+        '''
+        return self.block_type
+    
+    def set_type(self, block_type):
+        '''
+        Updates the type of the block to block_type
+        '''
+        self.block_type = block_type
+        
+    def __str__(self):
+        '''
+        Returns a string representation of the block
+        '''
+        return f"Block at ({self.x}, {self.y}) of type '{self.block_type}'"
