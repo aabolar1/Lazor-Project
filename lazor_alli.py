@@ -69,9 +69,7 @@ def board_state(filename, board):
             block_type, amount = line[0], int(line[2])
             
             # Find the empty spots where blocks are allowed
-            print(board)
             empty_spots = [(i, j) for i in range(len(board)) for j in range(len(board[0])) if board[i][j] == "o"]
-            print(empty_spots)
             if len(empty_spots) < int(amount):
                 raise ValueError(f"Warning: Not enough empty spots for {block_type}")
             
