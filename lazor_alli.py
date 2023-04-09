@@ -15,8 +15,8 @@ class Board:
     
     def read_Board(self):
         '''
-        This function reads in the contents of the .bff file and creates a representative board where each cell represents a position on the block
-        and contains information about the block located there.
+        This function reads in the contents of the .bff file and creates a representative board where each cell represents a position on the 
+        block and contains information about the block located there.
         '''
         # Split the contents of the file into lines
         with open(self.filename, 'r') as bff:
@@ -100,7 +100,8 @@ class Board:
     
     def get_lazors(self):
         '''
-        This function reads in the contents of the .bff file and creates a list of lazors that exist on the board, with their starting position and velocity.
+        This function reads in the contents of the .bff file and creates a list of lazors that exist on the board, with their starting 
+        position and velocity.
         '''
         with open(self.filename, 'r') as bff:
             lines = bff.readlines()
@@ -159,3 +160,5 @@ if __name__ == "__main__":
     print(curr_board)
     print(lazors)
     print(targets)
+
+    
