@@ -11,6 +11,7 @@ class Board:
         self.filename = filename
         self.board = self.read_Board()
         self.lazors = self.get_lazors() 
+        self.targets = self.get_targets()
     
     def read_Board(self):
         '''
@@ -116,17 +117,45 @@ class Board:
 
                 # Create a dictionary to represent the lazor
                 lazor = {
-                    "position": [x, y],
-                    "velocity": [vx, vy]
+                    "Laser position": [x, y],
+                    "Laser velocity": [vx, vy]
                 }
 
                 lazors.append(lazor)
 
         return lazors
     
+    def get_targets(self):
+        '''
+        This function reads in the contents of the .bff file and creates a list of target positions we need the lazers to intersect
+        '''
+        with open(self.filename, 'r') as bff:
+            lines = bff.readlines()
+
+        targets = []
+
+        for line in lines:
+            line = line.strip()
+
+            if line.startswith("P "):
+                # Parse the lazor information
+                data = line[2:].split(" ")
+                x, y = [int(i) for i in data]
+
+                # Create a dictionary to represent the lazor
+                target = {
+                    "Target position": [x, y],
+                }
+
+                targets.append(target)
+
+        return targets
+    
 if __name__ == "__main__":    
-    board = Board("mad_4.bff")
+    board = Board("dark_1.bff")
     curr_board = board.board_state()
     lazors = board.lazors
+    targets = board.targets
     print(curr_board)
     print(lazors)
+    print(targets)
