@@ -67,6 +67,7 @@ class Board:
         # Cope the board to a new list to not modify the original board
         new_board = [row[:] for row in self.board]
         
+        
         # Flag to start parsing the blocks in the file
         start_parsing = False
 
@@ -82,7 +83,7 @@ class Board:
                 block_type, amount = line[0], int(line[2])
 
                 # Find the empty spots where blocks are allowed
-                empty_spots = [(i, j) for i in range(len(self.board)) for j in range(len(self.board[0])) if self.board[i][j] == "o"]
+                empty_spots = [(i, j) for i in range(len(new_board)) for j in range(len(new_board[0])) if new_board[i][j] == "o"]
                 if len(empty_spots) < int(amount):
                     raise ValueError(f"Warning: Not enough empty spots for {block_type}")
 
@@ -93,7 +94,7 @@ class Board:
                     new_board[x][y] = block_type       
 
         # Adding blanks around the board to ensure block positions are correct
-        empty_row = [" "] * (len(self.board[0])+2) 
+        empty_row = [" "] * (len(new_board[0])+2) 
         new_board = [empty_row] + [[" "] + row + [" "] for row in new_board] + [empty_row]
          
         return new_board
@@ -153,12 +154,12 @@ class Board:
         return targets
     
 if __name__ == "__main__":    
-    board = Board("dark_1.bff")
+    board = Board("tiny_5.bff")
     curr_board = board.board_state()
     lazors = board.lazors
     targets = board.targets
     print(curr_board)
-    print(lazors)
-    print(targets)
+    #print(lazors)
+    #print(targets)
 
     
