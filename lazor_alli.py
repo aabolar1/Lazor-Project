@@ -159,7 +159,7 @@ if __name__ == "__main__":
     lazors = board.lazors
     targets = board.targets
     print(curr_board)
-    #print(lazors)
-    #print(targets)
+    print(lazors)
+    print(targets)
 
     
