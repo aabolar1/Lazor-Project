@@ -132,3 +132,5 @@ if __name__ == '__main__':
     lazor = board.lazors
     targets = board.targets
     print(curr_board)
+    print(lazor)
+    print(targets)
