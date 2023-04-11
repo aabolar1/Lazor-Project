@@ -97,13 +97,14 @@ class Board:
         with open(self.filename, 'r') as bff:
             lines = bff.readlines()
             
-        return [[int(x), int(y)] for line in lines if not line.startswith("#") and line.startswith("P ") for x, y in [line.strip()[2:].split(" ")]]
+        return [(int(x), int(y)) for line in lines if not line.startswith("#") and line.startswith("P ") for x, y in [line.strip()[2:].split(" ")]]
 
 if __name__ == '__main__':
-    board = Board("mad_1.bff")
+    board = Board("tiny_5.bff")
     game_board = board.board
     lazor = board.lazors
     targets = board.targets
     print(game_board)
     print(lazor)
     print(targets)
+ 
