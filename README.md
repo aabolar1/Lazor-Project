@@ -16,7 +16,7 @@ Next, run the programm with the name of the .bff file as an argument:
  - get_board function: This function reads in the contents of the .bff file and creates a corresponding board via randome distribution of the assigned blocks
  - get_lazors function: This function reads in the contents of the .bff file and creates a list of lazors that exist on the board, with their starting position and velocity
  - get_targets function: This function reads in the contents of the .bff file and identifies the targets the lazors must pass through to solve the game.
- - pt_chk function:
- - Lazer_paths function:
- - target_point_chk function:
- - lazor_solution function:
+ - pt_chk function: This function checks if the coordinates specified (x and y) are out of the boundaries of the board.
+ - Lazer_paths function: This function determines the laser path(s) for the given board state (block configuration on the board).
+ - target_point_chk function: This function checks if the laser path(s) goes through the target points
+ - Lazor_solver function: This function solves the Lazor game of the given board format with 'filename'.
