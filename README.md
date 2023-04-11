@@ -3,7 +3,7 @@ This is a Python program that solves the Lazors puzzle. The program reads a .bff
 ## Requirements
 - Python 3.9
 ## Usage
-To use this program, clone this repository and navigate to the Lazor-solver directory.
+To use this program, clone this repository and navigate to the lazor_project.
 Next, run the programm with the name of the .bff file as an argument:
 ## Features
  - Reads in the contents of a .bff file to generate the game board, blocks, lazors and targets
