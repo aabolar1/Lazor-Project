@@ -47,7 +47,7 @@ def LazorBoard(filename):
             
     return board
 
-board = LazorBoard("yarn_5.bff")
+#board = LazorBoard("yarn_5.bff")
 
 def board_state(filename, board):
     '''
@@ -81,20 +81,20 @@ def board_state(filename, board):
             random.shuffle(empty_spots)
             for i in range(amount):
                 x, y = empty_spots[i]
-                new_board[x][y] = block_type       
+                new_board[x][y] = block_type
                 
+    # Adding blanks around the board (Temporary, can be added to the board_state function)            
+    empty_row = [" "] * (len(board[0])+2)
+    for list in new_board:
+        list.insert(0," ")
+        list.append(" ")
+    new_board.insert(0,empty_row)
+    new_board.append(empty_row)
+    #board_state[3][5] = "C"
+            
     return new_board
 
-board_state = board_state("yarn_5.bff", board)
-
-# Adding blanks around the board (Temporary, can be added to the board_state function)
-empty_row = [" "] * (len(board[0])+2)
-for list in board_state:
-    list.insert(0," ")
-    list.append(" ")
-board_state.insert(0,empty_row)
-board_state.append(empty_row)
-board_state[3][5] = "C"
+#board_state = board_state("yarn_5.bff", board)
 
 def pt_chk(x, y, board_state):
     '''
@@ -137,16 +137,16 @@ def Lazer_paths(filename,board_state):
         lines = bff.readlines()
     
     start_points = []
-    for line1 in lines:
-        line1 = line1.strip()
+    for line in lines:
+        line = line.strip()
         
-        if line1.startswith("L"):
-            start_point = [line1[2],line1[4],line1[6],line1[8]]
-            start_point = [int(i) for i in start_point]
+        if line.startswith("L"):
+            data = line[2:].split(" ")
+            start_point = [int(i) for i in data]
         else:   # Why are these 'else' lines neccessary?
             continue
-        
-        start_points.append(start_point)        
+        start_points.append(start_point)
+        print(start_points)        
     
     #start_points.append([4,2,1,1])  
     lazer_paths = []      
@@ -159,64 +159,42 @@ def Lazer_paths(filename,board_state):
             current_pt = lazer_path[-1]
             current_dir = lazer_direction[-1]
             
-            if current_pt[0]%2 == 0:
+            if current_pt[0]%2 == 0: # When lazer is in the vertical intersection of boards, investigate the board left and right the lazer points
                 inv_pt1 = (current_pt[0]+current_dir[0],current_pt[1]) # Investigating point 1: board location the lazer or pointing towards
-                #print(board_state[inv_pt1[1]][inv_pt1[0]])
-                if pt_chk(inv_pt1[0], inv_pt1[1], board_state):
-                    lazer_paths.append(lazer_path)
-                    break 
-                elif board_state[inv_pt1[1]][inv_pt1[0]] == "B":
-                    lazer_paths.append(lazer_path)
-                    break
-                elif board_state[inv_pt1[1]][inv_pt1[0]] == "o" or board_state[inv_pt1[1]][inv_pt1[0]] == "x":
-                    lazer_direction.append(current_dir)
-                    lazer_path.append((current_pt[0]+current_dir[0], current_pt[1]+current_dir[1]))
-                else: # If block is "A" or "C"
-                    
-                    if board_state[inv_pt1[1]][inv_pt1[0]] == "C":
-                        start_points.append([list[0]+list[2],list[1]+list[3],list[2],list[3]])
-                        
-                    inv_pt2 = (current_pt[0]-current_dir[0],current_pt[1]) # Investigating point 2: board location next to the investigating point
-                    if pt_chk(inv_pt2[0], inv_pt2[1], board_state):
-                        lazer_paths.append(lazer_path)
-                        break
-                    elif board_state[inv_pt2[1]][inv_pt2[0]] == "A" or board_state[inv_pt2[1]][inv_pt2[0]] == "B":
-                        lazer_paths.append(lazer_path)
-                        break
-                    else:
-                        lazer_direction.append((-current_dir[0], current_dir[1]))
-                        lazer_path.append((current_pt[0]-current_dir[0], current_pt[1]+current_dir[1]))
-            else:
+                inv_pt2 = (current_pt[0]-current_dir[0],current_pt[1]) # Investigating point 2: board location next to the investigating point
+                reflected_dir = (-current_dir[0], current_dir[1])
+            else: # When lazer is in the horizontal intersection of boards, investigate the board above and below the lazer points
                 inv_pt1 = (current_pt[0],current_pt[1]+current_dir[1]) # Investigating point 1: board location the lazer or pointing towards
-                #print(board_state[inv_pt1[1]][inv_pt1[0]])
-                if pt_chk(inv_pt1[0], inv_pt1[1], board_state):
-                    lazer_paths.append(lazer_path)
-                    break 
-                elif board_state[inv_pt1[1]][inv_pt1[0]] == "B":
+                inv_pt2 = (current_pt[0],current_pt[1]-current_dir[1]) # Investigating point 2: board location next to the investigating point
+                reflected_dir = (current_dir[0], -current_dir[1])    
+           
+            if pt_chk(inv_pt1[0], inv_pt1[1], board_state): # When investing positions is out of the board region
+                lazer_paths.append(lazer_path)
+                break 
+            elif board_state[inv_pt1[1]][inv_pt1[0]] == "B":
+                lazer_paths.append(lazer_path)
+                break
+            elif board_state[inv_pt1[1]][inv_pt1[0]] == "o" or board_state[inv_pt1[1]][inv_pt1[0]] == "x":
+                lazer_direction.append(current_dir)
+                lazer_path.append((current_pt[0]+current_dir[0], current_pt[1]+current_dir[1]))
+            else: # If block is "A" or "C"
+                
+                if board_state[inv_pt1[1]][inv_pt1[0]] == "C":
+                    start_points.append([current_pt[0] + current_dir[0], current_pt[1] + current_dir[1], current_dir[0], current_dir[1]])
+                    
+                if pt_chk(inv_pt2[0], inv_pt2[1], board_state):
                     lazer_paths.append(lazer_path)
                     break
-                elif board_state[inv_pt1[1]][inv_pt1[0]] == "o" or board_state[inv_pt1[1]][inv_pt1[0]] == "x":
-                    lazer_direction.append(current_dir)
-                    lazer_path.append((current_pt[0]+current_dir[0], current_pt[1]+current_dir[1]))
-                else: # If block is "A" or "C"
-                    
-                    if board_state[inv_pt1[1]][inv_pt1[0]] == "C":
-                        start_points.append([current_pt[0] + current_dir[0], current_pt[1] + current_dir[1], current_dir[0], current_dir[1]])
-                        
-                    inv_pt2 = (current_pt[0],current_pt[1]-current_dir[1]) # Investigating point 2: board location next to the investigating point
-                    if pt_chk(inv_pt2[0], inv_pt2[1], board_state):
-                        lazer_paths.append(lazer_path)
-                        break
-                    elif board_state[inv_pt2[1]][inv_pt2[0]] == "A" or board_state[inv_pt2[1]][inv_pt2[0]] == "B":
-                        lazer_paths.append(lazer_path)
-                        break
-                    else:
-                        lazer_direction.append((current_dir[0], -current_dir[1]))
-                        lazer_path.append((current_pt[0]+current_dir[0], current_pt[1]-current_dir[1]))
-                
+                elif board_state[inv_pt2[1]][inv_pt2[0]] == "A" or board_state[inv_pt2[1]][inv_pt2[0]] == "B":
+                    lazer_paths.append(lazer_path)
+                    break
+                else: # "o" or "x" or "C"
+                    lazer_direction.append(reflected_dir)
+                    lazer_path.append((current_pt[0]+lazer_direction[-1][0], current_pt[1]+lazer_direction[-1][1]))
+     
     return lazer_paths
 
-Lazer_Paths = Lazer_paths("yarn_5.bff", board_state)                   
+#Lazer_Paths = Lazer_paths("yarn_5.bff", board_state)                   
                 
 def target_point_chk(filename, lazer_paths): # Not done yet...
     '''
@@ -248,14 +226,58 @@ def target_point_chk(filename, lazer_paths): # Not done yet...
             continue
         
         target_points.append(target_point)
-    return target_points
+               
+    #print(target_points)
+    
+    # #lazer_paths = [[(6,9)],[(9,2)]]
+    # lazer_paths = [[(1,2),(5,4)], [(6,3)]]
+    
+    lazer_pts =[]
+    for list in lazer_paths:
+        for tuple in list:
+            lazer_pts.append(tuple)
+    #print(lazer_pts)        
+    result = all(tuple in lazer_pts for tuple in target_points)
+    
+    #print(result)   
+    return  not result
 
-T = target_point_chk("yarn_5.bff",Lazer_Paths)
+# board = LazorBoard("yarn_5.bff")
+# board_state = board_state("yarn_5.bff", board)
+# Lazer_Paths = Lazer_paths("yarn_5.bff", board_state)
+# result = target_point_chk("yarn_5.bff",Lazer_Paths)
+
+def Lazor_solution(filename):
+
+    # filename = "yarn_5.bff"
+    board = LazorBoard(filename)
+
+# curr_board = board_state(filename, board)
+# # curr_board = [[' ', ' ', ' ', ' ', ' ', ' ', ' '], [' ', 'A', ' ', 'o', ' ', 'A', ' '], [' ', ' ', ' ', ' ', ' ', ' ', ' '], [' ', 'o', ' ', 'o', ' ', 'o', ' '], [' ', ' ', ' ', ' ', ' ', ' ', ' '], [' ', 'A', ' ', 'C', ' ', 'o', ' '], [' ', ' ', ' ', ' ', ' ', ' ', ' ']]
+# lazer_paths = Lazer_paths(filename, curr_board)
+# flag = target_point_chk(filename, lazer_paths)
+
+    iteration = 0
+    result = True
+    while result:
+        curr_board = board_state(filename, board) # board is coming out eith missing blocks
+        lazer_paths = Lazer_paths(filename, curr_board)
+        result = target_point_chk(filename, lazer_paths)
+        iteration += 1
+        print(iteration)
+        
+    with open(filename +'_answer.txt', 'w') as answer_file:
+            
+        for list in curr_board:
+            for i in list:
+                answer_file.write(i)
+            answer_file.write('\n')
+    return curr_board
+
+answer = Lazor_solution("tiny_5.bff")
 
 
-
-
-
+    
 class Block:
     '''
     This class object to represent each block within the game. The block object contains information 
