@@ -9,11 +9,12 @@ class Board:
         Initializes a new Board object from a .bff file.
         '''
         self.filename = filename
-        self.board = self.read_Board()
+        self.board = self.read_board()
+        self.curr_board = self.board_state()
         self.lazors = self.get_lazors() 
         self.targets = self.get_targets()
-    
-    def read_Board(self):
+
+    def read_board(self):
         '''
         This function reads in the contents of the .bff file and creates a representative board where each cell represents a position on the 
         block and contains information about the block located there.
@@ -22,7 +23,7 @@ class Board:
         with open(self.filename, 'r') as bff:
             lines = bff.readlines()
 
-        # Create the board with a step size of a half block, so odd numbers are space between the blocks and even numbers are the actual block
+        # Create the board where odd numbers are space between the blocks and even numbers are the actual block
         pre_board = []
         board = []
         for line in lines:
@@ -104,26 +105,14 @@ class Board:
         This function reads in the contents of the .bff file and creates a list of lazors that exist on the board, with their starting 
         position and velocity.
         '''
-        with open(self.filename, 'r') as bff:
-            lines = bff.readlines()
-
         lazors = []
-
-        for line in lines:
-            line = line.strip()
-
-            if line.startswith("L "):
-                # Parse the lazor information
-                data = line[2:].split(" ")
-                x, y, vx, vy = [int(i) for i in data]
-
-                # Create a dictionary to represent the lazor
-                lazor = {
-                    "Laser position": [x, y],
-                    "Laser velocity": [vx, vy]
-                }
-
-                lazors.append(lazor)
+        with open(self.filename, 'r') as bff:
+            for line in bff:
+                line = line.strip()
+                if line.startswith("L"):
+                    # Parse the lazor information
+                    x, y, vx, vy = map(int, line[2:].split())
+                    lazors.append([x, y, vx, vy])
 
         return lazors
     
@@ -133,33 +122,13 @@ class Board:
         '''
         with open(self.filename, 'r') as bff:
             lines = bff.readlines()
+            
+        return [[int(x), int(y)] for line in lines if not line.startswith("#") and line.startswith("P ") for x, y in [line.strip()[2:].split(" ")]]
 
-        targets = []
-
-        for line in lines:
-            line = line.strip()
-
-            if line.startswith("P "):
-                # Parse the lazor information
-                data = line[2:].split(" ")
-                x, y = [int(i) for i in data]
-
-                # Create a dictionary to represent the lazor
-                target = {
-                    "Target position": [x, y],
-                }
-
-                targets.append(target)
-
-        return targets
-    
-if __name__ == "__main__":    
-    board = Board("tiny_5.bff")
+if __name__ == '__main__':
+    board = Board("dark_1.bff")
+    game_board = board.read_board()
     curr_board = board.board_state()
-    lazors = board.lazors
+    lazor = board.lazors
     targets = board.targets
     print(curr_board)
-    print(lazors)
-    print(targets)
-
-    
