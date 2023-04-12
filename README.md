@@ -8,7 +8,7 @@ Next, run the programm with the name of the .bff file as an argument:
 ## Features
  - Reads in the contents of a .bff file to generate the game board, blocks, lazors and targets
  - Finds the solution by iterating over randomly generated game boards based on block assignments
- - Outputs the solutions in a text file showinf the correct position of each block
+ - Outputs the solutions in a text file showing the correct position of each block
  ## Code Overview 
  The program consists of the following segments:
  - class Board: This class object represents the game board, the blocks on the board, the lazors and targets.
