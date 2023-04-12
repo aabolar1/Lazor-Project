@@ -5,15 +5,38 @@ class Board:
     '''
     def __init__(self, filename):
         '''
-        Initializes a new Board object from a .bff file.
+        Initializes a new Board object from a .bff file
+
+        Parameters:
+        ----------
+        filename : str
+            The name of the .bff file
+
+        Returns
+        -------
+        None
         '''
         self.filename = filename
 
 
     def get_board(self):
         '''
-        This function reads in the contents of the .bff file and creates a representative board where each 
-        cell represents a position on the block and contains relevant information
+        This function reads in the contents of the .bff file and creates a corresponding board 
+        by randomly distributing the assigned blocks
+        
+        Parameters: None
+        ----------
+        
+        Raises
+        ------
+        ValueError
+            If there are more blocks than free space, an error occured when parsing the .bff 
+            file or the file is incorrect.
+
+        Returns
+        -------
+        new_board : list
+            A list of lists that represent the game board.
         '''
         # Split the contents of the bff file into lines
         with open(self.filename, 'r') as bff:
@@ -44,9 +67,8 @@ class Board:
         # Remove the last blank row that was appeneded   
         board.pop()
         
-        # Modify the board based on the blocks specified in the file
+        # Randomly distribute the blocks onto the board 
         parse = False
-        
         for line in lines:
             line = line.strip()
             
@@ -77,8 +99,17 @@ class Board:
     
     def get_lazors(self):
         '''
-        This function reads in the contents of the .bff file and creates a list of lazors that exist on the board, with their starting 
-        position and velocity.
+        This function reads in the contents of the .bff file and creates a list 
+        of lazors that exist on the board, with their starting position and velocity.
+        
+        Parameters: None
+        ----------
+        
+        Returns
+        -------
+        lazors : list
+            A list of lists that represent the lazers on the board, where each 
+            sublist contains starting positon and velocity [x, y, vx, vy]
         '''
         lazors = []
         with open(self.filename, 'r') as bff:
@@ -93,13 +124,23 @@ class Board:
     
     def get_targets(self):
         '''
-        This function reads in the contents of the .bff file and creates a list of target positions we need the lazers to intersect
+        This function reads in the contents of the .bff file and identifies the 
+        targets the lazors must pass through to solve the game.
+        
+        Parameters: None
+        ----------
+        
+        Returns
+        -------
+        list:
+            A list of tuples containing the coordinates of each target on the board.
+        
         '''
         with open(self.filename, 'r') as bff:
             lines = bff.readlines()
             
         return [(int(x), int(y)) for line in lines if not line.startswith("#") and line.startswith("P ") for x, y in [line.strip()[2:].split(" ")]]
-
+    
 def pt_chk(x, y, board_state):
     
     '''
@@ -173,6 +214,10 @@ def Lazer_paths(filename,board_state,start_points):
             # When investigating position 1 is either an available (o) or unavailable blank (x)
                 lazer_direction.append(current_dir) # Next laser point would have the same direction.
                 lazer_path.append((current_pt[0]+current_dir[0], current_pt[1]+current_dir[1])) # Next laser point position.
+                if len(lazer_path) > 50: 
+                    # If the lazer path length is higher than 50, it assumes that it is in an infinite loop and breaks out of the loop
+                    lazer_paths.append(lazer_path)
+                    break
             else: # When investigating position 1 has either a reflective (A) of refractive (C) block
                 
                 if board_state[inv_pt1[1]][inv_pt1[0]] == "C":
@@ -192,6 +237,10 @@ def Lazer_paths(filename,board_state,start_points):
                 # When investigating position 2 either is blank (o or x) or a refractive (C) block
                     lazer_direction.append(reflected_dir) # Next laser point would have the reflected direction.
                     lazer_path.append((current_pt[0]+lazer_direction[-1][0], current_pt[1]+lazer_direction[-1][1])) # Next laser point position.
+                    if len(lazer_path) > 50:
+                        # If the lazer path length is higher than 50, it assumes that it is in an infinite loop and breaks out of the loop
+                        lazer_paths.append(lazer_path)
+                        break
                     
     return lazer_paths                   
                 
@@ -251,7 +300,7 @@ def Lazor_solver(filename):
         lazer_paths = Lazer_paths(filename, curr_board, starting_points)
         result = target_pt_chk(filename, lazer_paths, target_points)
         iteration += 1
-        # print(iteration)
+        print(iteration)
         
     filename = filename.split('.')[0]    
     with open(filename +'_answer.txt', 'w') as answer_file:           
@@ -263,6 +312,4 @@ def Lazor_solver(filename):
 
     
 if __name__ == "__main__":     
-    answer = Lazor_solver("yarn_4.bff")
-
-    
+    answer = Lazor_solver("yarn_5.bff")
